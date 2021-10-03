@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="dc624991-c5c1-4137-99d0-75bb06e1fd3c" name="maze">
+        <fileTransfer accessType="SFTP" host="15.188.109.110" port="22" sshConfigId="be4f0222-eb0d-4441-8ea4-a360b65ad633" sshConfig="ubuntu@15.188.109.110:22 key" keyPair="true">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
