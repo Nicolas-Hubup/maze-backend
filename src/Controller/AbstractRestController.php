@@ -126,26 +126,26 @@ abstract class AbstractRestController extends AbstractController
 
     }
 
-    /**
-     * @param \DateTimeInterface $start
-     * @param \DateTimeInterface $end
-     * @param $missionIds
-     * @param $eventIds
-     * @param bool $impactsVehicles
-     * @param bool $impactsUsers
-     */
-    public function publishEventUpdate(\DateTimeInterface $start, \DateTimeInterface $end, $missionIds, $eventIds, bool $impactsVehicles, bool $impactsUsers): void
-    {
-        $this->publishUpdate([
-            "startDay" => DateTools::toSQLString($start, true),
-            "endDay" => DateTools::toSQLString($end, true),
-            "missions" => is_array($missionIds) ? $missionIds : $missionIds === null ? [] : [$missionIds],
-            "events" => is_array($eventIds) ? $eventIds : $eventIds === null ? [] : [$eventIds],
-            "impact_users" => $impactsUsers,
-            "impact_vehicles" => $impactsVehicles,
-            "initiator" => $this->getUser()->getId()
-        ]);
-    }
+//    /**
+//     * @param \DateTimeInterface $start
+//     * @param \DateTimeInterface $end
+//     * @param $missionIds
+//     * @param $eventIds
+//     * @param bool $impactsVehicles
+//     * @param bool $impactsUsers
+//     */
+//    public function publishEventUpdate(\DateTimeInterface $start, \DateTimeInterface $end, $missionIds, $eventIds, bool $impactsVehicles, bool $impactsUsers): void
+//    {
+//        $this->publishUpdate([
+//            "startDay" => DateTools::toSQLString($start, true),
+//            "endDay" => DateTools::toSQLString($end, true),
+//            "missions" => is_array($missionIds) ? $missionIds : $missionIds === null ? [] : [$missionIds],
+//            "events" => is_array($eventIds) ? $eventIds : $eventIds === null ? [] : [$eventIds],
+//            "impact_users" => $impactsUsers,
+//            "impact_vehicles" => $impactsVehicles,
+//            "initiator" => $this->getUser()->getId()
+//        ]);
+//    }
 
     /**
      * $this->success($items(=null), "toto") // 204 no content

@@ -1,0 +1,211 @@
+<?php
+
+namespace App\Entity;
+
+use App\Repository\WalletRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
+
+/**
+ * @ORM\Entity(repositoryClass=WalletRepository::class)
+ */
+class Wallet
+{
+    /**
+     * @Serializer\Groups({"wallet_address", "wallet"})
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
+     */
+    private $id;
+
+    /**
+     * @Serializer\Groups({"wallet_address", "wallet"})
+     * @ORM\Column(type="string", length=255)
+     */
+    private $passphrase;
+
+    /**
+     * @Serializer\Groups({"wallet_address", "wallet"})
+     * @ORM\Column(type="text")
+     */
+    private $mnemonicSentence;
+
+    /**
+     * @Serializer\Groups({"wallet_address", "wallet"})
+     * @ORM\Column(type="string", length=255)
+     */
+    private $name;
+
+    /**
+     * @Serializer\Groups({"wallet_address", "wallet"})
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $lastUpdatePassPhrase;
+
+    /**
+     * @Serializer\Groups({"wallet_address", "wallet"})
+     * @ORM\Column(type="bigint", nullable=true)
+     */
+    private $lovelaceBalance;
+
+    /**
+     * @Serializer\Groups({"wallet_address", "wallet"})
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $adaBalance;
+
+    /**
+     * @Serializer\Groups({"wallet_address", "wallet"})
+     * @ORM\Column(type="string", length=500)
+     */
+    private $walletId;
+
+    /**
+     * @ORM\OneToMany(targetEntity=WalletAddress::class, mappedBy="wallet")
+     */
+    private $walletAddresses;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $lastUpdated;
+
+    public function __construct()
+    {
+        $this->walletAddresses = new ArrayCollection();
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getPassphrase(): ?string
+    {
+        return $this->passphrase;
+    }
+
+    public function setPassphrase(string $passphrase): self
+    {
+        $this->passphrase = $passphrase;
+
+        return $this;
+    }
+
+    public function getMnemonicSentence(): ?string
+    {
+        return $this->mnemonicSentence;
+    }
+
+    public function setMnemonicSentence(string $mnemonicSentence): self
+    {
+        $this->mnemonicSentence = $mnemonicSentence;
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function getLastUpdatePassPhrase(): ?\DateTimeInterface
+    {
+        return $this->lastUpdatePassPhrase;
+    }
+
+    public function setLastUpdatePassPhrase(?\DateTimeInterface $lastUpdatePassPhrase): self
+    {
+        $this->lastUpdatePassPhrase = $lastUpdatePassPhrase;
+
+        return $this;
+    }
+
+    public function getLovelaceBalance(): ?string
+    {
+        return $this->lovelaceBalance;
+    }
+
+    public function setLovelaceBalance(?string $lovelaceBalance): self
+    {
+        $this->lovelaceBalance = $lovelaceBalance;
+
+        return $this;
+    }
+
+    public function getAdaBalance(): ?int
+    {
+        return $this->adaBalance;
+    }
+
+    public function setAdaBalance(?int $adaBalance): self
+    {
+        $this->adaBalance = $adaBalance;
+
+        return $this;
+    }
+
+    public function getWalletId(): ?string
+    {
+        return $this->walletId;
+    }
+
+    public function setWalletId(string $walletId): self
+    {
+        $this->walletId = $walletId;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|WalletAddress[]
+     */
+    public function getWalletAddresses(): Collection
+    {
+        return $this->walletAddresses;
+    }
+
+    public function addWalletAddress(WalletAddress $walletAddress): self
+    {
+        if (!$this->walletAddresses->contains($walletAddress)) {
+            $this->walletAddresses[] = $walletAddress;
+            $walletAddress->setWallet($this);
+        }
+
+        return $this;
+    }
+
+    public function removeWalletAddress(WalletAddress $walletAddress): self
+    {
+        if ($this->walletAddresses->removeElement($walletAddress)) {
+            // set the owning side to null (unless already changed)
+            if ($walletAddress->getWallet() === $this) {
+                $walletAddress->setWallet(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getLastUpdated(): ?\DateTimeInterface
+    {
+        return $this->lastUpdated;
+    }
+
+    public function setLastUpdated(?\DateTimeInterface $lastUpdated): self
+    {
+        $this->lastUpdated = $lastUpdated;
+
+        return $this;
+    }
+}

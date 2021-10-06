@@ -34,5 +34,6 @@ class UserController extends AbstractRestController
         $em->flush();
 
         return $this->success($user, "user", 200);
+
     }
 }

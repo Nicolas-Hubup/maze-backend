@@ -25,7 +25,7 @@ class DateTools
 
     public static function getTimeZone()
     {
-        return new \DateTimeZone($_ENV["TIMEZONE"]);
+        return new \DateTimeZone("Europe/Paris");
     }
 
     /**
