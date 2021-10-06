@@ -69,13 +69,26 @@ class Wallet
     private $walletAddresses;
 
     /**
+     * @Serializer\Groups({"wallet_address", "wallet"})
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $lastUpdated;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Utxo::class, mappedBy="wallet")
+     */
+    private $utxos;
+
+    /**
+     * @Serializer\Groups({"wallet_address", "wallet"})
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $lastUpdatedUtxos;
+
     public function __construct()
     {
         $this->walletAddresses = new ArrayCollection();
+        $this->utxos = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -205,6 +218,48 @@ class Wallet
     public function setLastUpdated(?\DateTimeInterface $lastUpdated): self
     {
         $this->lastUpdated = $lastUpdated;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Utxo[]
+     */
+    public function getUtxos(): Collection
+    {
+        return $this->utxos;
+    }
+
+    public function addUtxo(Utxo $utxo): self
+    {
+        if (!$this->utxos->contains($utxo)) {
+            $this->utxos[] = $utxo;
+            $utxo->setWallet($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUtxo(Utxo $utxo): self
+    {
+        if ($this->utxos->removeElement($utxo)) {
+            // set the owning side to null (unless already changed)
+            if ($utxo->getWallet() === $this) {
+                $utxo->setWallet(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getLastUpdatedUtxos(): ?\DateTimeInterface
+    {
+        return $this->lastUpdatedUtxos;
+    }
+
+    public function setLastUpdatedUtxos(?\DateTimeInterface $lastUpdatedUtxos): self
+    {
+        $this->lastUpdatedUtxos = $lastUpdatedUtxos;
 
         return $this;
     }

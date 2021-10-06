@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Utxo;
 use App\Entity\Wallet;
 use App\Entity\WalletAddress;
 use App\Tools\Date\DateTools;
@@ -167,4 +168,55 @@ class GeneralPurposeController extends AbstractRestController
         curl_close($curl);
         return $this->success($wallet, "wallet", 200);
     }
+
+    /**
+     * @param Wallet $wallet
+     * @return JsonResponse|Response
+     * @Route("wallet/{wallet}/update/utxos", methods={"GET"})
+     */
+    public function updateUtxosOfGivenWallet(Wallet $wallet)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, 'http://localhost:1337/v2/wallets/' . $wallet->getWalletId() . '/utxo');
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+
+
+        $result = curl_exec($curl);
+        if(curl_errno($curl)) {
+            echo 'Error:' . curl_error($curl);
+        }
+        $payload = json_decode($result, true);
+        $wallet->setLastUpdatedUtxos(DateTools::getNow());
+        $em->persist($wallet);
+        if(!empty($payload["entries"])) {
+            foreach($payload["entries"] as $_utxo) {
+                $utxo = new Utxo();
+                $utxo
+                    ->setWallet($wallet)
+                    ->setAdaBalance((int)$_utxo["ada"]["quantity"] / 1000000);
+                $em->persist($utxo);
+            }
+        }
+        $em->flush();
+        return $this->success($payload, "wallet", 200);
+    }
+
+    /**
+     * @param Wallet $wallet
+     * @return JsonResponse|Response
+     * @Route("wallet/{wallet}/get/unused/address", methods={"GET"})
+     */
+    public function useAddressOfGivenWallet(Wallet $wallet)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $walletAddress = $this->getDoctrine()->getRepository(WalletAddress::class)->findOneBy(["wallet" => $wallet->getId(), "state" => "unused"]);
+        $addressToUse = $walletAddress->getWalletAddressId();
+        $walletAddress
+            ->setState("used");
+        $em->persist($walletAddress);
+        $em->flush();
+        return $this->success($addressToUse);
+    }
+
 }
