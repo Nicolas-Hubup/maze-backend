@@ -12,6 +12,27 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class WalletController extends AbstractRestController
 {
+
+    /**
+     * @param Wallet $wallet
+     * @return JsonResponse|Response
+     * @Route("wallet/{wallet}/get/state", methods={"GET"})
+     */
+    public function getStateOfWallet(Wallet $wallet)
+    {
+        $curl = curl_init();
+
+        curl_setopt($curl, CURLOPT_URL, 'http://localhost:1337/v2/wallets/' . $wallet->getWalletId());
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+
+        $result = curl_exec($curl);
+        if(curl_errno($curl)) {
+            echo 'Error:' . curl_error($curl);
+        }
+        curl_close($curl);
+        $data = json_decode($result, true);
+        return $this->success($data);
+    }
     /**
      * @Route("generate/cardano/wallet", methods={"GET"})
      */
@@ -96,6 +117,7 @@ class WalletController extends AbstractRestController
             echo 'Error:' . curl_error($curl);
         }
         $payload = json_decode($result, true);
+        var_dump($payload);
         $wallet
             ->setLovelaceBalance($payload["balance"]["total"]["quantity"])
             ->setLastUpdated(DateTools::getNow());
