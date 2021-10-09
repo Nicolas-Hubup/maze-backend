@@ -1,0 +1,14 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="SSBasedInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <searchConfiguration name="Search dump" text="dump($variable$);&#10;dump($variable$, $variable1$);&#10;dump($variable$, $variable1$, $variable2$);" recursive="false" caseInsensitive="false" type="PHP">
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="variable" within="" contains="" />
+        <constraint name="variable1" within="" contains="" />
+        <constraint name="variable2" within="" contains="" />
+      </searchConfiguration>
+    </inspection_tool>
+    <inspection_tool class="a829ba79-2583-3d1a-9db6-dd63c49846bc" enabled="true" level="ERROR" enabled_by_default="true" />
+  </profile>
+</component>
