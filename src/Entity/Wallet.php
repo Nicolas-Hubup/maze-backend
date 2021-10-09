@@ -22,13 +22,11 @@ class Wallet
     private $id;
 
     /**
-     * @Serializer\Groups({"wallet_address", "wallet"})
      * @ORM\Column(type="string", length=255)
      */
     private $passphrase;
 
     /**
-     * @Serializer\Groups({"wallet_address", "wallet"})
      * @ORM\Column(type="text")
      */
     private $mnemonicSentence;

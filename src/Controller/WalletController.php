@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\TemporaryWalletAddress;
 use App\Entity\Utxo;
 use App\Entity\Wallet;
 use App\Entity\WalletAddress;
@@ -12,7 +13,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class WalletController extends AbstractRestController
 {
-
     /**
      * @param Wallet $wallet
      * @return JsonResponse|Response
@@ -56,9 +56,15 @@ class WalletController extends AbstractRestController
         ));
 
         $response = curl_exec($curl);
-
+        $em = $this->getDoctrine()->getManager();
+        $payload = json_decode($response);
+        $temporaryWallet = new TemporaryWalletAddress();
+        $temporaryWallet
+            ->setCreatedAt(DateTools::getNow());
+        $em->persist($temporaryWallet);
+        $em->flush();
         curl_close($curl);
-        echo $response;
+        return $this->success($temporaryWallet, "temporary_wallet", 200);
     }
 
     /**
@@ -117,7 +123,6 @@ class WalletController extends AbstractRestController
             echo 'Error:' . curl_error($curl);
         }
         $payload = json_decode($result, true);
-        var_dump($payload);
         $wallet
             ->setLovelaceBalance($payload["balance"]["total"]["quantity"])
             ->setLastUpdated(DateTools::getNow());

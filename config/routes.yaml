@@ -5,3 +5,7 @@
 api:
   path: /
   controller: App\Controller\GeneralPuroposeController
+
+nft:
+  path: /api
+  controller: App\Controller\NftController
