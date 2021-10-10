@@ -38,7 +38,7 @@ class DateTools
             throw new \RuntimeException('date format should be ISO ATOM (Y-m-d\TH:i:sP) ex : 2017-12-31T23:59:59+09:00 ');
         }
         $date = \DateTime::createFromFormat(\DateTime::ATOM, $string, new \DateTimeZone("UTC"));
-        $date->setTimezone(new \DateTimeZone($_ENV["TIMEZONE"]));
+        $date->setTimezone(new \DateTimeZone("Europe/Paris"));
 
         return $date;
     }

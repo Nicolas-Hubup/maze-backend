@@ -51,7 +51,7 @@ class Wallet
 
     /**
      * @Serializer\Groups({"wallet_address", "wallet"})
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="float", nullable=true)
      */
     private $adaBalance;
 
@@ -83,10 +83,16 @@ class Wallet
      */
     private $lastUpdatedUtxos;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Transaction::class, mappedBy="wallet")
+     */
+    private $transactions;
+
     public function __construct()
     {
         $this->walletAddresses = new ArrayCollection();
         $this->utxos = new ArrayCollection();
+        $this->transactions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -159,7 +165,7 @@ class Wallet
         return $this->adaBalance;
     }
 
-    public function setAdaBalance(?int $adaBalance): self
+    public function setAdaBalance(?float $adaBalance): self
     {
         $this->adaBalance = $adaBalance;
 
@@ -258,6 +264,36 @@ class Wallet
     public function setLastUpdatedUtxos(?\DateTimeInterface $lastUpdatedUtxos): self
     {
         $this->lastUpdatedUtxos = $lastUpdatedUtxos;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Transaction[]
+     */
+    public function getTransactions(): Collection
+    {
+        return $this->transactions;
+    }
+
+    public function addTransaction(Transaction $transaction): self
+    {
+        if (!$this->transactions->contains($transaction)) {
+            $this->transactions[] = $transaction;
+            $transaction->setWallet($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTransaction(Transaction $transaction): self
+    {
+        if ($this->transactions->removeElement($transaction)) {
+            // set the owning side to null (unless already changed)
+            if ($transaction->getWallet() === $this) {
+                $transaction->setWallet(null);
+            }
+        }
 
         return $this;
     }

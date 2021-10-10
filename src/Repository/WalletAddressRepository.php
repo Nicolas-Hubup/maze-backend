@@ -12,39 +12,18 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method WalletAddress[]    findAll()
  * @method WalletAddress[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class WalletAddressRepository extends ServiceEntityRepository
+class WalletAddressRepository extends HelperRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, WalletAddress::class);
     }
 
-    // /**
-    //  * @return WalletAddress[] Returns an array of WalletAddress objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function returnArrayOfAddressesForGivenWallet($walletId)
     {
-        return $this->createQueryBuilder('w')
-            ->andWhere('w.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('w.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        $addresses = $this->sqlFetch("SELECT wallet_address_id FROM wallet_address WHERE wallet_id = ?", $walletId);
+        return $this->extractProperty('wallet_address_id', $addresses);
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?WalletAddress
-    {
-        return $this->createQueryBuilder('w')
-            ->andWhere('w.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
+
 }
