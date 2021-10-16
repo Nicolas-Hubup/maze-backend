@@ -18,26 +18,25 @@ class MintController extends AbstractRestController
      */
     public function fetchAvailablePrice()
     {
-        $em = $this->getDoctrine()->getManager();
+//        $em = $this->getDoctrine()->getManager();
         $figure = $this->getDoctrine()->getRepository(Figure::class)->findOneBy(["available" => 1]);
         $decimal = $figure->getRandomNumber();
         $adaPrice = "35," . strval($decimal);
 
-        $figure->setAvailable(false);
-        $figure->setReservedAt(DateTools::getNow());
+//        $figure->setAvailable(false);
+//        $figure->setReservedAt(DateTools::getNow());
 
         $walletAddress = $this->getDoctrine()->getRepository(WalletAddress::class)->findOneBy(["state" => "unused"]);
         $address = $walletAddress->getWalletAddressId();
 
-        $walletAddress->setState("used");
-        $em->persist($figure);
-        $em->persist($walletAddress);
-        $em->flush();
+//        $walletAddress->setState("used");
+//        $em->persist($figure);
+//        $em->persist($walletAddress);
+//        $em->flush();
         $data = [];
         $data["ada"] = $adaPrice;
         $data["address"] = $address;
 
         return $this->success($data);
-
     }
 }

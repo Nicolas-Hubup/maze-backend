@@ -54,6 +54,16 @@ class Transaction
      */
     private $adaAmount;
 
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $isValid;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $refundProceeded;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -143,4 +153,29 @@ class Transaction
 
         return $this;
     }
+
+    public function getIsValid(): ?bool
+    {
+        return $this->isValid;
+    }
+
+    public function setIsValid(?bool $isValid): self
+    {
+        $this->isValid = $isValid;
+
+        return $this;
+    }
+
+    public function getRefundProceeded(): ?bool
+    {
+        return $this->refundProceeded;
+    }
+
+    public function setRefundProceeded(bool $refundProceeded): self
+    {
+        $this->refundProceeded = $refundProceeded;
+
+        return $this;
+    }
+
 }

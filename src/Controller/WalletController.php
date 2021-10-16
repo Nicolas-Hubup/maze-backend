@@ -249,5 +249,53 @@ class WalletController extends AbstractRestController
         return $this->success($payload);
     }
 
+    /**
+     * @param Wallet $wallet
+     * @Route("while/transaction", methods={"GET"})
+     */
+    public function whileTransaction(Wallet $wallet)
+    {
+        $em = $this->getDoctrine()->getManager();
+        while(true) {
+            $curl = curl_init();
+            curl_setopt($curl, CURLOPT_URL, 'http://localhost:1337/v2/wallets/' . $wallet->getWalletId() . '/transactions');
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+
+            $result = curl_exec($curl);
+            if(curl_errno($curl)) {
+                echo 'Error:' . curl_error($curl);
+            }
+            $repo = $this->getDoctrine()->getRepository(Transaction::class);
+            $addresses = $this->getDoctrine()->getRepository(WalletAddress::class)->returnArrayOfAddressesForGivenWallet($wallet->getId());
+            $transactions = $repo->sqlFetch("SELECT DISTINCT(transaction_id) AS transaction_id FROM transaction");
+            $knownTransactions = $repo->extractProperty('transaction_id', $transactions);
+
+            $walletAddresses = $repo->sqlFetch("SELECT DISTINCT(wallet_address_id) AS wallet_address_id FROM wallet_address");
+            $knownAddresses = $repo->extractProperty('wallet_address_id', $walletAddresses);
+            $payload = json_decode($result, true);
+            foreach($payload as $_transaction) {
+                if($_transaction["direction"] === "incoming" && !in_array($_transaction["id"], $knownTransactions)) {
+                    foreach($_transaction["outputs"] as $_subOutput) {
+                        if(!in_array($_subOutput["address"], $knownAddresses)) {
+                            $senderOutPutAddress = $_subOutput["address"];
+                        }
+                    }
+                    $transaction = new Transaction();
+                    $transaction
+                        ->setWallet($wallet)
+                        ->setTransactionId($_transaction["id"])
+                        ->setDirection($_transaction["direction"])
+                        ->setCreatedAt(DateTools::parseIsoAtomString($_transaction["inserted_at"]["time"]))
+                        ->setLovelaceAmount($_transaction["amount"]["quantity"])
+                        ->setAdaAmount($_transaction["amount"]["quantity"] / 1000000)
+                        ->setSenderOutputAddress($senderOutPutAddress);
+                    $em->persist($transaction);
+                }
+            }
+            $em->flush();
+            sleep(15);
+        }
+    }
+
 
 }

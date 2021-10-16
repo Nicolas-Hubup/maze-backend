@@ -12,7 +12,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Wallet[]    findAll()
  * @method Wallet[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class WalletRepository extends ServiceEntityRepository
+class WalletRepository extends HelperRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
