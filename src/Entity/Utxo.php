@@ -18,42 +18,43 @@ class Utxo
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Wallet::class, inversedBy="utxos")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\Column(type="string", length=255)
      */
-    private $wallet;
+    private $txHash;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $adaBalance;
+    private $txIx;
+
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getWallet(): ?Wallet
+    public function getTxHash(): ?string
     {
-        return $this->wallet;
+        return $this->txHash;
     }
 
-    public function setWallet(?Wallet $wallet): self
+    public function setTxHash(string $txHash): self
     {
-        $this->wallet = $wallet;
+        $this->txHash = $txHash;
 
         return $this;
     }
 
-    public function getAdaBalance(): ?int
+    public function getTxIx(): ?int
     {
-        return $this->adaBalance;
+        return $this->txIx;
     }
 
-    public function setAdaBalance(?int $adaBalance): self
+    public function setTxIx(?int $txIx): self
     {
-        $this->adaBalance = $adaBalance;
+        $this->txIx = $txIx;
 
         return $this;
     }
+
 }
